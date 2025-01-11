@@ -23,7 +23,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Currencies, Currency } from "@/lib/currencies"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import SkeletonWrapper from "./SkeletonWrapper"
+import { UserSettings } from "@prisma/client"
+import { UpdateUserCurrency } from "@/app/wizard/_actions/userSettings"
+import { toast } from "sonner"
  
 export function CurrencyCombo() {
   const [open, setOpen] = React.useState(false)
@@ -31,16 +35,39 @@ export function CurrencyCombo() {
   const [selectedOption, setSelectedOption] = React.useState<Currency | null>(
     null
   )
+// prisma has defined all the types for us already. eg, UserSettings
 
-  const userSettings = useQuery({
+  const userSettings = useQuery<UserSettings>({
     queryKey: ["userSettings"], //The data property of userSettings holds the data returned by the queryFn.
     queryFn: () => fetch("/api/user-settings").then((res)=> res.json()),
   })
 
-  console.log("user Sewttings:", userSettings);
+  React.useEffect(()=> {
+    if(!userSettings.data) return;
+    const userCurrency = Currencies.find(
+      (currency) => currency.value === userSettings.data.currency 
+    );
+    if(userCurrency) setSelectedOption(userCurrency);
+  },[userSettings.data])
+
+  const mutation = useMutation({
+    mutationFn: UpdateUserCurrency,
+  })
+
+  const selectOption = (value: Currency | null) => {
+    if(!value)  {
+      toast.error("Please select a currency");
+      return;
+    }
+    toast.loading("Updating currency.....", {
+      id: "update-currency"
+    });
+    
+  }
   
   if (isDesktop) {
     return (
+      <SkeletonWrapper isLoading= {userSettings.isLoading}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-full justify-start">
@@ -51,10 +78,12 @@ export function CurrencyCombo() {
           <StatusList setOpen={setOpen} setSelectedOption={setSelectedOption} />
         </PopoverContent>
       </Popover>
+      </SkeletonWrapper>
     )
   }
 
   return (
+    <SkeletonWrapper isLoading= {userSettings.isLoading}>
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button variant="outline" className="w-full justify-start">
@@ -67,6 +96,7 @@ export function CurrencyCombo() {
         </div>
       </DrawerContent>
     </Drawer>
+    </SkeletonWrapper>
   )
 }
 

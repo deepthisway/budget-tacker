@@ -18,5 +18,9 @@ const SkeletonWrapper = (
     </Skeleton>
   )
 }
+// children refers to the content that is wrapped inside the SkeletonWrapper, like the text on dropdown, "Set Currency"
+// that should be hidden becuse the data inside the dropdown is still loading.
 
-export default SkeletonWrapper 
+export default SkeletonWrapper;
+
+// we can take isLoading property from the object returned by tanstack/react-query, and pass it to the SkeletonWrapper.

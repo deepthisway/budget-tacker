@@ -26,3 +26,6 @@ useQuery: The queryKey acts as a dependency array. When the queryKey changes, us
 
 ## cn function
 The cn function is a utility function often used in React (or JavaScript) projects to manage and conditionally apply CSS class names. It makes working with dynamic class lists easier and more readable.
+
+
+## Server actions
