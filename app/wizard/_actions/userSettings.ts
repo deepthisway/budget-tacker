@@ -6,11 +6,14 @@ import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 
 export async function UpdateUserCurrency(currency: string)  {
+    console.log("Currency is: ", currency);
+    
     const parsedBody = UpdateUserCurrencySchema.safeParse({
         currency
     })
+    // parsed body is returning false;
     if(!parsedBody.success) {
-        throw new Error(parsedBody.error.issues[0].message)
+        throw new Error;
     }
 
     const user = await currentUser();

@@ -7,5 +7,6 @@ export const UpdateUserCurrencySchema = z.object({
         if(!found)  {
             throw new Error(`invalid currency: ${value}`)
         }
+        return true;
     })
 })

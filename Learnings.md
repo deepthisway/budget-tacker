@@ -29,3 +29,8 @@ The cn function is a utility function often used in React (or JavaScript) projec
 
 
 ## Server actions
+
+
+//Doubts
+
+/api/categories/route.js
